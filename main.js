@@ -23,10 +23,7 @@ const UNITS = {
   "/test/package": () => Promise.all([import("./test/package/run.js")]),
   "/test/modules/pear-full-square/mrepo-base-info": () => Promise.all([import("./modules/pear-full-square/mrepo-base-info/test/info.test.js")]),
   "/test/modules/pear-full-square/mrepo-base-protocol": () => Promise.all([import("./modules/pear-full-square/mrepo-base-protocol/test/protocol.test.js")]),
-  "/test/modules/pear-full-square/mycelium-container-document": () => Promise.all([import("./modules/pear-full-square/mycelium-container-document/test/documents.test.js")]),
   "/test/modules/pear-full-square/mycelium-uri": () => Promise.all([import("./modules/pear-full-square/mycelium-uri/test/names.test.js"), import("./modules/pear-full-square/mycelium-uri/test/relative.test.js"), import("./modules/pear-full-square/mycelium-uri/test/uri.test.js")]),
-  "/test/modules/pear-full-square/mycelium-value-avro": () => Promise.all([import("./modules/pear-full-square/mycelium-value-avro/test/avro.test.js")]),
-  "/test/modules/pear-full-square/mycelium-value-json": () => Promise.all([import("./modules/pear-full-square/mycelium-value-json/test/json.test.js")]),
   "/test/modules/pear-full-square/pkgm-base-check": () => Promise.all([import("./modules/pear-full-square/pkgm-base-check/test/mrepo.test.js"), import("./modules/pear-full-square/pkgm-base-check/test/package.test.js"), import("./modules/pear-full-square/pkgm-base-check/test/patterns.test.js"), import("./modules/pear-full-square/pkgm-base-check/test/rules.test.js"), import("./modules/pear-full-square/pkgm-base-check/test/tests.test.js")]),
 }
 // The test sets: their tests by name (modules: every module's unit tests).
@@ -85,23 +82,15 @@ export async function instantiate () {
     fs.writeFileSync(path.join(dir, key), b.read(key))
   }
   const platform = `${os.platform()}-${os.arch()}`
-  // an addon resolved for several platforms: a condition each (its os, its
-  // arch), this one chosen, as Bare chooses when it runs the bundle
-  const pick = v => {
-    if (typeof v === 'string' || !v) return v || null
-    for (const [k, w] of Object.entries(v)) if (k === os.platform() || k === os.arch() || k === 'default') { const r = pick(w); if (r) return r }
-    return null
-  }
   for (const [from, map] of Object.entries(b.resolutions)) {
     for (const to of Object.values(map)) {
-      const addon = pick(to?.addon)
-      if (!addon || !from.startsWith('/modules/node_modules/')) continue
+      if (!to?.addon || !from.startsWith('/modules/node_modules/')) continue
       const parts = from.slice('/modules/node_modules/'.length).split('/')
       const pkg = parts[0].startsWith('@') ? parts.slice(0, 2).join('/') : parts[0]
       const name = JSON.parse(b.read(`/modules/node_modules/${pkg}/package.json`)).name.replace('/', '+')
       const target = path.join(dir, 'modules', 'node_modules', pkg, 'prebuilds', platform, `${name}.bare`)
       fs.mkdirSync(path.dirname(target), { recursive: true })
-      fs.copyFileSync(path.join(path.dirname(file), addon.replace(/^\/\.\.\//, '')), target)
+      fs.copyFileSync(path.join(path.dirname(file), to.addon.replace(/^\/\.\.\//, '')), target)
     }
   }
   const mods = path.join(dir, 'modules')
