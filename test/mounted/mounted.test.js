@@ -15,10 +15,10 @@ function execution (protocols = {}, files = {}) {
     runtime: { protocols },
     read: async uri => { if (!(uri in files)) throw new Error(`nothing at ${uri}`); return files[uri] },
     // the rest of an execution context, standing in: a file that may not
-    // be there, the log (kept: entries), a step run as it is
+    // be there, the log (kept: entries, a line each), a step run as it is
     find: async function (p) { try { return await this.read(p) } catch { return null } },
-    log: function (level, event, data = {}) { (this.entries ??= []).push({ level, event, ...data }) },
-    step: async function (event, data, fn, level = 'verbose') { const r = await fn(); (this.entries ??= []).push({ level, event, ...(typeof data === 'function' ? data(r) : data) }); return r },
+    log: function (level, event, line) { if (typeof line !== 'string') throw new Error('not a log entry: a line'); (this.entries ??= []).push({ level, event, line }) },
+    step: async function (event, line, fn, level = 'verbose') { const r = await fn(); (this.entries ??= []).push({ level, event, line: typeof line === 'function' ? line(r) : line }); return r },
     put: (uri, bytes) => { writes.push(['put', uri, JSON.parse(bytes.toString())]); files[uri] = Buffer.from(bytes) },
     remove: uri => { writes.push(['remove', uri]); delete files[uri] }
   }
@@ -57,9 +57,9 @@ test('its config, value by value', (t) => {
 
 test('activate: the loaded protocol\'s config written into the protocols layer', async (t) => {
   const { exec, writes } = execution({ help: HELP, boot: {} })
-  t.alike(await act('activate', exec, { uri: ['.'], args: ['help'] }), { activated: 'help' }, 'what it returns')
+  t.alike(await act('activate', exec, { uri: ['.'], args: ['help'] }), 'Activated help: requests from outside are accepted for it.', 'what it says it did')
   t.alike(writes, [['put', '/protocols/help.json', HELP]], 'one write: its config, as the runtime loaded it, at /protocols/help.json')
-  t.alike(await act('activate', exec, { uri: ['.'], args: ['help'] }), { activated: 'help' }, 'active already: the same answer')
+  t.alike(await act('activate', exec, { uri: ['.'], args: ['help'] }), 'Activated help: requests from outside are accepted for it.', 'active already: the same answer')
   t.alike(writes.length, 2, 'written again, nothing else')
   await t.exception(act('activate', exec, { uri: ['.'], args: ['rest'] }), /no protocol: rest \(boot, help\)/, 'a protocol that is not loaded: refused, those that are named')
   await t.exception(act('activate', exec, { uri: ['.'] }), /missing argument: protocol/, 'no name: said')
@@ -68,7 +68,7 @@ test('activate: the loaded protocol\'s config written into the protocols layer',
 
 test('deactivate: its file removed from the protocols layer', async (t) => {
   const { exec, writes, files } = execution({ help: HELP }, { '/protocols/help.json': Buffer.from(JSON.stringify(HELP)) })
-  t.alike(await act('deactivate', exec, { uri: ['.'], args: ['help'] }), { deactivated: 'help' }, 'what it returns')
+  t.alike(await act('deactivate', exec, { uri: ['.'], args: ['help'] }), 'Deactivated help: requests from outside are refused for it.', 'what it says it did')
   t.alike(writes, [['remove', '/protocols/help.json']], 'one write: the file removed')
   t.absent('/protocols/help.json' in files, 'no longer active')
   await t.exception(act('deactivate', exec, { uri: ['.'], args: ['help'] }), /not active: help/, 'not active: refused')

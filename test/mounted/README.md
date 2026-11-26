@@ -14,7 +14,7 @@ minimal execution in memory.
   actions at the mrepo itself, each taking one argument, the protocol's
   name; no default action, no state, no target.
 - **Its actions**: what `activate` writes into the protocols layer and
-  what `deactivate` removes, what each returns, each refusal, and that a
+  what `deactivate` removes, what each says it did, each refusal, and that a
   refusal writes nothing.
 - **Nothing forgotten**: the last test fails when the config names an
   action that was not run here, or one that wrote nothing into the
