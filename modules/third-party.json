@@ -8,13 +8,6 @@
   ],
   "modules": [
     {
-      "name": "avsc",
-      "version": "5.8.0",
-      "license": "MIT",
-      "resolved": "git+ssh://git@github.com/bare-for-pear/avsc.git#27bebb2c7ffa2ee891a726b7315bd28dea58dafc",
-      "integrity": null
-    },
-    {
       "name": "b4a",
       "version": "1.9.0",
       "license": "Apache-2.0",
@@ -69,13 +62,6 @@
       "license": "Apache-2.0",
       "resolved": "https://registry.npmjs.org/bare-channel/-/bare-channel-5.3.0.tgz",
       "integrity": "sha512-W42Pkl/IjfkIVObQnixidRThST6ZcqY0u6AMTLb2+Jc/enBVsXPxzmyhEDoQjNNYi4WBGkOG7YHR4X46Ah9xfA=="
-    },
-    {
-      "name": "bare-crypto",
-      "version": "1.15.4",
-      "license": "Apache-2.0",
-      "resolved": "https://registry.npmjs.org/bare-crypto/-/bare-crypto-1.15.4.tgz",
-      "integrity": "sha512-4luuiLnxIJvM7ZyyW6pXbaaGoQDZcIkfcVZrPzJ3oIpdi2UIP37dROmzBWqI2lnrzfKoQlKWM8ryHmyG2svViw=="
     },
     {
       "name": "bare-debug-log",
@@ -342,13 +328,6 @@
       "license": "Apache-2.0",
       "resolved": "https://registry.npmjs.org/bare-node-fs/-/bare-node-fs-1.0.2.tgz",
       "integrity": "sha512-Tas23gfqHmkNQe1VUID6ifMi3oAYHqTuYr8sCq/xcskpTaDChGxZKJnFJzi1/pSnHzgQCLlkX+FpPnqNJTyQgg=="
-    },
-    {
-      "name": "fs-native-extensions",
-      "version": "1.5.3",
-      "license": "Apache-2.0",
-      "resolved": "https://registry.npmjs.org/fs-native-extensions/-/fs-native-extensions-1.5.3.tgz",
-      "integrity": "sha512-pl39uoPqAdANcule683Wghiw3UlQc+tDagBtKT8ltKaK/Jxu9cDL5sMjca+4eTgrHnn3I7qRO5jPG/658GOsdg=="
     },
     {
       "name": "globbie",
